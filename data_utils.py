@@ -60,7 +60,7 @@ class SUNAttribute(Dataset):
         img_path = self.imgs[index]
         img = Image.open(os.path.join(data_root,'images',img_path))
         img = trans(img)
-        label = torch.from_numpy(self.atrs[index])
+        label = torch.from_numpy(self.img_atr[index])
         return img, label
 
 if __name__ == '__main__':
@@ -69,5 +69,5 @@ if __name__ == '__main__':
     for i, (img, label) in enumerate(dataloader):
         print(img.shape)
         print(label.shape)
-        display_torch_img(img[0],False)
+        #display_torch_img(img[0],False)
 

@@ -17,7 +17,7 @@ data_root = '../datasets/sun'
 class SUNAttribute(Dataset):
     def __init__(self, data_root, split, ih, iw):
         mat = scipy.io.loadmat(os.path.join(data_root,'SUNAttributeDB','attributeLabels_continuous.mat'))
-        self.img_atr = np.asarray(mat['labels_cv']) # num_img x 102
+        self.img_atr = np.asarray(mat['labels_cv'],dtype=float) # num_img x 102
         num_img = self.img_atr.shape[0]
         self.train_size = int(round(num_img*0.95))
         self.val_size = num_img-self.train_size

@@ -51,15 +51,18 @@ def train_model(model, dataloaders, criterion, optimizer, ckpt_path, best_ckpt_p
             for i,(inputs, labels) in enumerate(dataloader):
                 #print(step)
                 inputs = inputs.to(device)
-                labels = labels.to(device)
+                labels = labels.to(device) # b x 102
+                corr_labels = labels.unsqueeze(2).bmm(labels.unsqueeze(1)) # b x 102 x 102
+                corr_labels = corr_labels / corr_labels.diagonal(0,1,2).clamp(min=1).unsqueeze(1) # p(j=1|i=1)
 
                 # zero the parameter gradients
                 optimizer.zero_grad()
 
                 with torch.set_grad_enabled(phase == 'train'):
                     # Get model outputs and calculate loss
-                    outputs = model(inputs)
+                    outputs, corr_mat, running_corr = model(inputs, corr_labels)
                     loss = criterion(outputs, labels)
+                    loss += criterion(corr_mat, running_corr)
 
                     if phase == 'train':
                         loss.backward()

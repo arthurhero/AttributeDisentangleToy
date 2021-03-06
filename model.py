@@ -15,7 +15,7 @@ class ADNet(nn.Module):
         self.resnet50.fc = nn.Linear(num_ftrs, 1024)
         self.atr_vec = nn.Parameter(torch.randn(1024,num_atrs))
         self.cond_mat = nn.Parameter(torch.randn(1024,1024))
-        self.running_corr = torch.eye(num_atrs).clamp(min=0.5) # prior
+        self.running_corr = nn.Parameter(torch.eye(num_atrs).clamp(min=0.5), requires_grad=False) # prior
         self.running_count = 1.0
 
     def forward(self, x, corr_labels):
@@ -31,5 +31,5 @@ class ADNet(nn.Module):
         sim_vec = feat_vec.unsqueeze(1).matmul(self.cond_mat).matmul(self.atr_vec) # b x 1 x 102
 
         self.running_count += b
-        self.running_corr = (self.running_corr*(self.running_count-b) + corr_labels.sum(0)) / self.running_count
+        self.running_corr = nn.Parameter((self.running_corr*(self.running_count-b) + corr_labels.sum(0)) / self.running_count, requires_grad=False)
         return torch.sigmoid(sim_vec.squeeze(1)), torch.sigmoid(corr_mat), self.running_corr  # b x 102, 102 x 102, 102 x 102

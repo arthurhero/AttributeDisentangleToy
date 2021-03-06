@@ -53,7 +53,10 @@ def train_model(model, dataloaders, criterion, optimizer, ckpt_path, best_ckpt_p
                 inputs = inputs.to(device)
                 labels = labels.to(device) # b x 102
                 corr_labels = labels.unsqueeze(2).bmm(labels.unsqueeze(1)) # b x 102 x 102
-                corr_labels = corr_labels / corr_labels.diagonal(0,1,2).clamp(min=1).unsqueeze(1) # p(j=1|i=1)
+                corr_diag = corr_labels.diagonal(0,1,2) # b x 102
+                prior = torch.eye(labels.shape[1]).clamp(min=0.5).unsqueeze(0).to(device)*(corr_diag == 0).float().unsqueeze(2)
+                corr_labels = corr_labels / corr_labels.diagonal(0,1,2).clamp(min=1).unsqueeze(2) # p(j=1|i=1)
+                corr_labels += prior
 
                 # zero the parameter gradients
                 optimizer.zero_grad()

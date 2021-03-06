@@ -35,8 +35,8 @@ class SUNAttribute(Dataset):
         self.trans = transforms.Compose([
             transforms.ColorJitter(brightness=(0.8, 1.2),
                                    contrast=(0.8, 1.2),
-                                   saturation=(0.8, 1.2),
-                                   hue=(-0.1, 0.1)),
+                                   saturation=(0.8, 1.2)),
+                                   #hue=(-0.1, 0.1)),
             transforms.RandomResizedCrop(size=(ih,iw), scale=(0.8, 1.0), ratio=(0.75, 1.3333333333333333), interpolation=2),
             transforms.ToTensor()
         ])
@@ -60,7 +60,9 @@ class SUNAttribute(Dataset):
         img_path = self.imgs[index]
         img = Image.open(os.path.join(data_root,'images',img_path))
         img = trans(img)
-        label = torch.from_numpy(self.img_atr[index])
+        if img.shape[0]==1:
+            img = img.expand(3,-1,-1)
+        label = torch.from_numpy(self.img_atr[index]).float()
         return img, label
 
 if __name__ == '__main__':
@@ -69,5 +71,5 @@ if __name__ == '__main__':
     for i, (img, label) in enumerate(dataloader):
         print(img.shape)
         print(label.shape)
-        #display_torch_img(img[0],False)
+        display_torch_img(img[0],False)
 

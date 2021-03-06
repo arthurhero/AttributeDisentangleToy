@@ -38,6 +38,9 @@ def display_img(img):
 
 def display_torch_img(img,normalized=True):
     img=img.cpu().detach()
+    tmp = img[0].clone()
+    img[0]=img[2]
+    img[2]=tmp
     if normalized:
         img = (img+0.5)
     img = img.clamp(0,1.0)

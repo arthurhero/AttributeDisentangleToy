@@ -58,10 +58,8 @@ class SUNAttribute(Dataset):
         else:
             trans = self.trans
         img_path = self.imgs[index]
-        img = Image.open(os.path.join(data_root,'images',img_path))
+        img = Image.open(os.path.join(data_root,'images',img_path)).convert('RGB')
         img = trans(img)
-        if img.shape[0]==1:
-            img = img.expand(3,-1,-1)
         label = torch.from_numpy(self.img_atr[index]).float()
         return img, label
 
@@ -69,7 +67,5 @@ if __name__ == '__main__':
     dataset = SUNAttribute(data_root, 'train', 224, 224)
     dataloader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=1)
     for i, (img, label) in enumerate(dataloader):
-        print(img.shape)
-        print(label.shape)
         display_torch_img(img[0],False)
 

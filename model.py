@@ -15,8 +15,8 @@ class ADNet(nn.Module):
         self.resnet50.fc = nn.Linear(num_atrs*49, 2048)
         self.fc2 = nn.Linear(2048, 1024)
         self.atr_vec = nn.Parameter(torch.randn(1024,num_atrs))
-        self.q_encoder = nn.Linear(1024,1024)
-        self.k_encoder = nn.Linear(49,1024)
+        self.q_encoder = nn.Linear(1024,49)
+        self.k_encoder = nn.Linear(49,49)
 
     def forward(self, x):
         '''
@@ -32,8 +32,8 @@ class ADNet(nn.Module):
             if 'layer4' in k:
                 last_feat = x.clone() # b x 2048 x h' x w'
                 last_feat = F.interpolate(last_feat,(7,7),mode='bilinear').reshape(b,2048,-1) # b x 2048 x 49
-                key = self.k_encoder(last_feat) # b x 2048 x 1024 
-                query = (self.q_encoder(self.atr_vec.transpose(0,1))).transpose(0,1).unsqueeze(0).expand(b,-1,-1) # b x 1024 x num_atrs
+                key = self.k_encoder(last_feat) # b x 2048 x 49 
+                query = (self.q_encoder(self.atr_vec.transpose(0,1))).transpose(0,1).unsqueeze(0).expand(b,-1,-1) # b x 49 x num_atrs
                 weights = F.softmax(torch.bmm(key,query), dim=1) # b x 2048 x num_atrs 
                 attended = last_feat.unsqueeze(2) * weights.unsqueeze(3) # b x 2048 x num_atrs x 49
                 attended = attended.sum(1) # b x num_atrs x 49

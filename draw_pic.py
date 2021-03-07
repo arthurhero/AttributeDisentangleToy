@@ -50,5 +50,6 @@ dataloader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=0)
 for i, (img, label) in enumerate(dataloader):
     pred, _,_ = adnet(img)
     for i in range(len(atr_names)):
-        print(atr_names[i],label[0][i].item(),pred[0][i].item())
+        if label[0][i].item()>0:
+            print(atr_names[i],label[0][i].item(),pred[0][i].item())
     display_torch_img(img[0],False)

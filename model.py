@@ -24,12 +24,14 @@ class ADNet(nn.Module):
         '''
         b = x.shape[0]
         feat_vec = self.resnet50(x) # b x 1024
+        feat_vec = feat_vec / (feat_vec.pow(2).sum(1,keepdim=True).pow(0.5)+10e-8) # normalize
         with torch.no_grad():
             self.atr_vec = nn.Parameter(self.atr_vec / (self.atr_vec.pow(2).sum(0,keepdim=True).pow(0.5)+10e-8)) # normalize to unit vec
+            self.cond_mat = nn.Parameter(self.cond_mat / (self.cond_mat.pow(2).sum().pow(0.5)+10e=8)) # normalize
         corr_mat = self.atr_vec.transpose(0,1).matmul(self.cond_mat).matmul(self.atr_vec) # num_atrs x num_atrs
         sim_vec = feat_vec.unsqueeze(1).matmul(self.cond_mat).matmul(self.atr_vec) # b x 1 x 102
 
         if corr_labels is not None:
             self.running_corr = nn.Parameter(self.running_corr + corr_labels.sum(0), requires_grad=False) # 102 x 102
         conds = self.running_corr / self.running_corr.diagonal().unsqueeze(1)
-        return torch.sigmoid(sim_vec.squeeze(1)), torch.sigmoid(corr_mat), conds # b x 102, 102 x 102, 102 x 102
+        return sigmoid(sim_vec.squeeze(1)), torch.sigmoid(corr_mat), conds # b x 102, 102 x 102, 102 x 102

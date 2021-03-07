@@ -53,7 +53,8 @@ def train_model(model, dataloaders, criterion, optimizer, ckpt_path, best_ckpt_p
                 inputs = inputs.to(device)
                 labels = labels.to(device) # b x 102
                 if epoch == 0:
-                    corr_labels = labels.unsqueeze(2).bmm(labels.unsqueeze(1)) # b x 102 x 102
+                    l_ = (label>0.5).float()
+                    corr_labels = l_.unsqueeze(2).bmm(l_.unsqueeze(1)) # b x 102 x 102
 
                 # zero the parameter gradients
                 optimizer.zero_grad()

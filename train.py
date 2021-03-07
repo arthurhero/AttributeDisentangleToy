@@ -67,7 +67,9 @@ def train_model(model, dataloaders, criterion, optimizer, ckpt_path, best_ckpt_p
                         outputs, corr_mat, conds = model(inputs)
                     loss = criterion(corr_mat, conds)
                     if epoch > 0:
-                        loss += criterion(outputs, labels)
+                        weights = (labels>0.5).float()+1.0 # pos labels get 2 times weights
+                        loss += ((outputs-labels).pow(2)*weights).mean()
+                        #loss += criterion(outputs, labels)
 
                     if phase == 'train':
                         loss.backward()

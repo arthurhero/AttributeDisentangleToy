@@ -17,7 +17,7 @@ class ADNet(nn.Module):
         self.cond_mat = nn.Parameter(torch.randn(1024,1024))
         self.running_corr = nn.Parameter(torch.eye(num_atrs).clamp(min=0.5), requires_grad=False) # prior
 
-    def forward(self, x, corr_labels):
+    def forward(self, x, corr_labels=None):
         '''
         x - b x c x h x w, imgs
         corr_labels - b x 102 x 102
@@ -29,6 +29,7 @@ class ADNet(nn.Module):
         corr_mat = self.atr_vec.transpose(0,1).matmul(self.cond_mat).matmul(self.atr_vec) # num_atrs x num_atrs
         sim_vec = feat_vec.unsqueeze(1).matmul(self.cond_mat).matmul(self.atr_vec) # b x 1 x 102
 
-        self.running_corr = nn.Parameter(self.running_corr + corr_labels.sum(0), requires_grad=False) # 102 x 102
+        if corr_labels is not None:
+            self.running_corr = nn.Parameter(self.running_corr + corr_labels.sum(0), requires_grad=False) # 102 x 102
         conds = self.running_corr / self.running_corr.diagonal().unsqueeze(1)
         return torch.sigmoid(sim_vec.squeeze(1)), torch.sigmoid(corr_mat), conds # b x 102, 102 x 102, 102 x 102

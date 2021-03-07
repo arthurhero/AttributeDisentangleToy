@@ -52,16 +52,21 @@ def train_model(model, dataloaders, criterion, optimizer, ckpt_path, best_ckpt_p
                 #print(step)
                 inputs = inputs.to(device)
                 labels = labels.to(device) # b x 102
-                corr_labels = labels.unsqueeze(2).bmm(labels.unsqueeze(1)) # b x 102 x 102
+                if epoch == 0:
+                    corr_labels = labels.unsqueeze(2).bmm(labels.unsqueeze(1)) # b x 102 x 102
 
                 # zero the parameter gradients
                 optimizer.zero_grad()
 
                 with torch.set_grad_enabled(phase == 'train'):
                     # Get model outputs and calculate loss
-                    outputs, corr_mat, conds = model(inputs, corr_labels)
-                    loss = criterion(outputs, labels)
-                    loss += criterion(corr_mat, conds)
+                    if epoch == 0:
+                        outputs, corr_mat, conds = model(inputs, corr_labels)
+                    else:
+                        outputs, corr_mat, conds = model(inputs)
+                    loss = criterion(corr_mat, conds)
+                    if epoch > 0:
+                        loss += criterion(outputs, labels)
 
                     if phase == 'train':
                         loss.backward()

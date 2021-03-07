@@ -59,9 +59,9 @@ def train_model(model, dataloaders, criterion, optimizer, ckpt_path, best_ckpt_p
 
                 with torch.set_grad_enabled(phase == 'train'):
                     # Get model outputs and calculate loss
-                    outputs, corr_mat, running_corr = model(inputs, corr_labels)
+                    outputs, corr_mat, conds = model(inputs, corr_labels)
                     loss = criterion(outputs, labels)
-                    loss += criterion(corr_mat, running_corr)
+                    loss += criterion(corr_mat, conds)
 
                     if phase == 'train':
                         loss.backward()

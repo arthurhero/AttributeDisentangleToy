@@ -51,7 +51,11 @@ def train_model(model, dataloaders, criterion, optimizer, ckpt_path, best_ckpt_p
 
             if phase == 'train':
                 pos_weights = ((1/dataloader.dataset.freq)/torch.linalg.norm(1/dataloader.dataset.freq)).to(device)
+                pos_weights = pos_weights*(float(len(dataloader.dataset.atrs)))
+                print(pos_weights)
                 neg_weights = (dataloader.dataset.freq / torch.linalg.norm(dataloader.dataset.freq)).to(device)
+                neg_weights = neg_weights*(float(len(dataloader.dataset.atrs)))
+                print(neg_weights)
 
             for i,(inputs, labels) in enumerate(dataloader):
                 #print(step)

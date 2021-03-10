@@ -69,15 +69,17 @@ def train_model(model, dataloaders, criterion, optimizer, ckpt_path, best_ckpt_p
                 with torch.set_grad_enabled(phase == 'train'):
                     # Get model outputs and calculate loss
                     if epoch == 0:
-                        outputs, corr_mat, conds = model(inputs, corr_labels)
+                        outputs, corr_mat, conds, atr_vec = model(inputs, corr_labels)
                     else:
-                        outputs, corr_mat, conds = model(inputs)
-                    loss = criterion(corr_mat, conds)
+                        outputs, corr_mat, condsi, atr_vec = model(inputs)
+                    loss = criterion(corr_mat, conds).item()
+                    loss += atr_vec.var(dim=1).mean().item()
                     if epoch > 0:
                         if phase == 'train':
-                            loss += ((labels*(pos_weights) + (1-labels)*(neg_weights))*(outputs-labels).pow(2)).mean()
+                            loss += ((labels*(pos_weights) + (1-labels)*(neg_weights))*(outputs-labels).pow(2)).mean().item()
+                            loss += outputs.var(dim=0).mean().item()
                         else:
-                            loss += criterion(outputs, labels)
+                            loss += criterion(outputs, labels).item()
 
                     if phase == 'train':
                         loss.backward()

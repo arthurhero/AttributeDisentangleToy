@@ -15,7 +15,7 @@ data_root = '../datasets/sun'
 
 
 class SUNAttribute(Dataset):
-    def __init__(self, data_root, split, ih, iw):
+    def __init__(self, data_root, split, ih, iw, freq_file='freq.txt'):
         mat = scipy.io.loadmat(os.path.join(data_root,'SUNAttributeDB','attributeLabels_continuous.mat'))
         self.img_atr = np.asarray(mat['labels_cv'],dtype=float) # num_img x 102
         num_img = self.img_atr.shape[0]
@@ -44,6 +44,10 @@ class SUNAttribute(Dataset):
             transforms.Resize((ih,iw)),
             transforms.ToTensor()
         ])
+        with open(freq_file,'r') as f:
+            self.freq = [float(l.rstrip().split()[-1]) for l in f.readlines()]
+            f.close()
+        self.freq = torch.Tensor(self.freq)
 
     def __len__(self):
         if self.split == 'train':
@@ -66,6 +70,18 @@ class SUNAttribute(Dataset):
 if __name__ == '__main__':
     dataset = SUNAttribute(data_root, 'train', 224, 224)
     dataloader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=1)
+    freq = np.zeros(102)
     for i, (img, label) in enumerate(dataloader):
-        display_torch_img(img[0],False)
+        #display_torch_img(img[0],False)
+        freq += (label>0.5).float().sum(0).numpy()
+    for i in range(len(freq)):
+        print(dataset.atrs[i],freq[i])
+    import matplotlib as mpl
+    from matplotlib import pyplot
 
+    pyplot.bar(list(range(102)), freq, width=0.8)
+    pyplot.xticks(ticks=list(range(102)), labels=dataset.atrs, rotation=90, Fontsize=3)
+    pyplot.title('Attribute frequency in SUN Attribute training split')
+    pyplot.tight_layout()
+    pyplot.savefig('freq.pdf')
+    pyplot.show()

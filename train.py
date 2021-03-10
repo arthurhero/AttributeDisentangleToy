@@ -20,9 +20,9 @@ num_epochs = 10
 lr = 10e-4
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
-train_dataset = SUNAttribute(data_root, 'train', 224, 224)
+train_dataset = SUNAttribute(data_root, 'train', 224, 224, freq_file='freq.txt')
 train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=batch_size)
-val_dataset = SUNAttribute(data_root, 'val', 224, 224)
+val_dataset = SUNAttribute(data_root, 'val', 224, 224, freq_file='freq.txt')
 val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=batch_size)
 
 def train_model(model, dataloaders, criterion, optimizer, ckpt_path, best_ckpt_path, num_epochs):
@@ -48,6 +48,11 @@ def train_model(model, dataloaders, criterion, optimizer, ckpt_path, best_ckpt_p
 
             # Iterate over data.
             dataloader = dataloaders[phase]
+
+            if phase == 'train':
+                pos_weights = ((1/dataloader.dataset.freq)/torch.linalg.norm(1/dataloader.dataset.freq)).to(device)
+                neg_weights = (dataloader.dataset.freq / torch.linalg.norm(dataloader.dataset.freq)).to(device)
+
             for i,(inputs, labels) in enumerate(dataloader):
                 #print(step)
                 inputs = inputs.to(device)
@@ -67,7 +72,10 @@ def train_model(model, dataloaders, criterion, optimizer, ckpt_path, best_ckpt_p
                         outputs, corr_mat, conds = model(inputs)
                     loss = criterion(corr_mat, conds)
                     if epoch > 0:
-                        loss += criterion(outputs, labels)
+                        if phase == 'train':
+                            loss += ((labels*(pos_weights) + (1-labels)*(neg_weights))*(outputs-labels).pow(2)).mean()
+                        else:
+                            loss += criterion(outputs, labels)
 
                     if phase == 'train':
                         loss.backward()

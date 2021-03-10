@@ -1,0 +1,102 @@
+sailing/ boating 635.0
+driving 724.0
+biking 594.0
+transporting things or people 670.0
+sunbathing 235.0
+vacationing/ touring 898.0
+hiking 700.0
+climbing 589.0
+camping 811.0
+reading 567.0
+studying/ learning 234.0
+teaching/ training 290.0
+research 204.0
+diving 405.0
+swimming 539.0
+bathing 166.0
+eating 485.0
+cleaning 80.0
+socializing 705.0
+congregating 745.0
+waiting in line/ queuing 312.0
+competing 601.0
+sports 535.0
+exercise 439.0
+playing 532.0
+gaming 108.0
+spectating/ being in an audience 435.0
+farming 316.0
+constructing/ building 83.0
+shopping 444.0
+medical activity 116.0
+working 1001.0
+using tools 370.0
+digging 182.0
+conducting business 258.0
+praying 277.0
+fencing 371.0
+railing 534.0
+wire 320.0
+railroad 109.0
+trees 1651.0
+grass 1617.0
+vegetation 1765.0
+shrubbery 846.0
+foliage 1713.0
+leaves 1482.0
+flowers 205.0
+asphalt 623.0
+pavement 615.0
+shingles 450.0
+carpet 311.0
+brick 407.0
+tiles 178.0
+concrete 378.0
+metal 1178.0
+paper 324.0
+wood (not part of a tree) 1612.0
+vinyl/ linoleum 292.0
+rubber/ plastic 547.0
+cloth 1313.0
+sand 316.0
+rock/stone 539.0
+dirt/soil 810.0
+marble 131.0
+glass 1109.0
+waves/ surf 148.0
+ocean 386.0
+running water 171.0
+still water 493.0
+ice 158.0
+snow 283.0
+clouds 1497.0
+smoke 80.0
+fire 50.0
+natural light 6352.0
+direct sun/sunny 2332.0
+electric/indoor lighting 2032.0
+aged/ worn 592.0
+glossy 1023.0
+matte 574.0
+sterile 151.0
+moist/ damp 604.0
+dry 1157.0
+dirty 401.0
+rusty 268.0
+warm 831.0
+cold 385.0
+natural 1410.0
+man-made 8047.0
+open area 5232.0
+semi-enclosed area 496.0
+enclosed area 4710.0
+far-away horizon 1454.0
+no horizon 7191.0
+rugged scene 761.0
+mostly vertical components 1135.0
+mostly horizontal components 796.0
+symmetrical 354.0
+cluttered space 489.0
+scary 139.0
+soothing 784.0
+stressful 353.0

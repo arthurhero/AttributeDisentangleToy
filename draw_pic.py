@@ -24,7 +24,7 @@ atr_names = [m[0][0] for m in mat]
 
 # load learned parameters
 adnet = ADNet(3,102)
-adnet.load_state_dict(torch.load('adnet_corr.ckpt', map_location=torch.device('cpu')))
+adnet.load_state_dict(torch.load('adnet_weight.ckpt', map_location=torch.device('cpu')))
 '''
 gt_corr = adnet.running_corr / adnet.running_corr.diagonal().unsqueeze(1)
 learned_corr = torch.sigmoid(adnet.atr_vec.transpose(0,1).matmul(adnet.cond_mat).matmul(adnet.atr_vec))

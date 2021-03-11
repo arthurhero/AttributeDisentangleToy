@@ -48,7 +48,8 @@ def train_model(model, dataloaders, criterion, optimizer, ckpt_path, best_ckpt_p
 
             # Iterate over data.
             dataloader = dataloaders[phase]
-
+            
+            '''
             if phase == 'train':
                 total = len(dataloader.dataset.imgs)
                 pos_freq = dataloader.dataset.freq
@@ -56,6 +57,7 @@ def train_model(model, dataloaders, criterion, optimizer, ckpt_path, best_ckpt_p
                 middle = (pos_freq+neg_freq) / 2.0
                 pos_weights = (middle / pos_freq).to(device)
                 neg_weights = (middle / neg_freq).to(device)
+                '''
 
             for i,(inputs, labels) in enumerate(dataloader):
                 #print(step)
@@ -75,11 +77,9 @@ def train_model(model, dataloaders, criterion, optimizer, ckpt_path, best_ckpt_p
                     else:
                         outputs, corr_mat, conds, atr_vec = model(inputs)
                     loss = criterion(corr_mat, conds)
-                    #loss += -atr_vec.var(dim=1).mean()
                     if epoch > 0:
                         if phase == 'train':
-                            loss += ((labels*(pos_weights) + (1-labels)*(neg_weights))*(outputs-labels).pow(2)).mean()
-                            #loss += -outputs.var(dim=0).mean()
+                            loss += -labels*outputs.log()*(1-outputs).pow(5) - (1-labels)*(1-outputs).log()*(outputs).pow(5)
                         else:
                             loss += criterion(outputs, labels)
 

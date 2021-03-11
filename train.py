@@ -50,10 +50,12 @@ def train_model(model, dataloaders, criterion, optimizer, ckpt_path, best_ckpt_p
             dataloader = dataloaders[phase]
 
             if phase == 'train':
-                pos_weights = ((1/dataloader.dataset.freq)/torch.linalg.norm(1/dataloader.dataset.freq)).to(device)
-                pos_weights = pos_weights*(float(len(dataloader.dataset.atrs)))
-                neg_weights = (dataloader.dataset.freq / torch.linalg.norm(dataloader.dataset.freq)).to(device)
-                neg_weights = neg_weights*(float(len(dataloader.dataset.atrs)))
+                total = len(dataloader.dataset.imgs)
+                pos_freq = dataloader.dataset.freq
+                neg_freq = total - pos_freq
+                middle = (pos_freq+neg_freq) / 2.0
+                pos_weight = middle / pos_freq
+                neg_weight = middle / neg_freq
 
             for i,(inputs, labels) in enumerate(dataloader):
                 #print(step)
@@ -73,11 +75,11 @@ def train_model(model, dataloaders, criterion, optimizer, ckpt_path, best_ckpt_p
                     else:
                         outputs, corr_mat, condsi, atr_vec = model(inputs)
                     loss = criterion(corr_mat, conds)
-                    loss += -atr_vec.var(dim=1).mean()
+                    #loss += -atr_vec.var(dim=1).mean()
                     if epoch > 0:
                         if phase == 'train':
                             loss += ((labels*(pos_weights) + (1-labels)*(neg_weights))*(outputs-labels).pow(2)).mean()
-                            loss += -outputs.var(dim=0).mean()
+                            #loss += -outputs.var(dim=0).mean()
                         else:
                             loss += criterion(outputs, labels)
 

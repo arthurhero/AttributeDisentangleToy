@@ -48,7 +48,7 @@ pyplot.show()
 dataset = SUNAttribute('../datasets/sun', 'val', 224, 224)
 dataloader = DataLoader(dataset, batch_size=1, shuffle=True, num_workers=0)
 for i, (img, label) in enumerate(dataloader):
-    pred, _,_ = adnet(img)
+    pred, _,_,_ = adnet(img)
     for i in pred[0].topk(5)[1]:
         print(atr_names[i])
     print()

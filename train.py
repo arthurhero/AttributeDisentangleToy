@@ -54,8 +54,8 @@ def train_model(model, dataloaders, criterion, optimizer, ckpt_path, best_ckpt_p
                 pos_freq = dataloader.dataset.freq
                 neg_freq = total - pos_freq
                 middle = (pos_freq+neg_freq) / 2.0
-                pos_weights = middle / pos_freq
-                neg_weights = middle / neg_freq
+                pos_weights = (middle / pos_freq).to(device)
+                neg_weights = (middle / neg_freq).to(device)
 
             for i,(inputs, labels) in enumerate(dataloader):
                 #print(step)

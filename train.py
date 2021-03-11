@@ -73,7 +73,7 @@ def train_model(model, dataloaders, criterion, optimizer, ckpt_path, best_ckpt_p
                     if epoch == 0:
                         outputs, corr_mat, conds, atr_vec = model(inputs, corr_labels)
                     else:
-                        outputs, corr_mat, condsi, atr_vec = model(inputs)
+                        outputs, corr_mat, conds, atr_vec = model(inputs)
                     loss = criterion(corr_mat, conds)
                     #loss += -atr_vec.var(dim=1).mean()
                     if epoch > 0:

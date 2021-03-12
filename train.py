@@ -82,7 +82,7 @@ def train_model(model, dataloaders, criterion, optimizer, ckpt_path, best_ckpt_p
                     if epoch > 0:
                         if phase == 'train':
                             weights = pos_weights*labels + neg_weights*(1-labels)
-                            loss += -labels*outputs.log()*weights - (1-labels)*(1-outputs).log()*weights
+                            loss += (-labels*outputs.log()*weights - (1-labels)*(1-outputs).log()*weights).mean()
                         else:
                             loss += criterion(outputs, labels)
 

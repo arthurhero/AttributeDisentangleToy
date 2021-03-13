@@ -24,7 +24,9 @@ atr_names = [m[0][0] for m in mat]
 
 # load learned parameters
 adnet = ADNet(3,102)
-adnet.load_state_dict(torch.load('adnet_weight.ckpt', map_location=torch.device('cpu')))
+adnet.load_state_dict(torch.load('adnet_corr.ckpt', map_location=torch.device('cpu')))
+adnet2 = ADNet(3,102)
+adnet2.load_state_dict(torch.load('adnet_weight3.ckpt', map_location=torch.device('cpu')))
 '''
 gt_corr = adnet.running_corr / adnet.running_corr.diagonal().unsqueeze(1)
 learned_corr = torch.sigmoid(adnet.atr_vec.transpose(0,1).matmul(adnet.cond_mat).matmul(adnet.atr_vec))
@@ -49,7 +51,11 @@ dataset = SUNAttribute('../datasets/sun', 'val', 224, 224)
 dataloader = DataLoader(dataset, batch_size=1, shuffle=True, num_workers=0)
 for i, (img, label) in enumerate(dataloader):
     pred, _,_,_ = adnet(img)
-    for i in pred[0].topk(5)[1]:
+    for i in pred[0].topk(10)[1]:
+        print(atr_names[i])
+    print()
+    pred, _,_,_ = adnet2(img)
+    for i in pred[0].topk(10)[1]:
         print(atr_names[i])
     print()
     display_torch_img(img[0],False)

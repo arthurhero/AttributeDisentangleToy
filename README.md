@@ -25,4 +25,4 @@ and maybe after 10 epochs, stop the training, tune down the learing rate, and mo
 ```sh
 python draw_pic.py
 ```
-Note that in the current code, it loads adnet_corr.ckpt (trained without re-weighing) and adnet_weight3.ckpt (trained with re-weighing).
+Note that in the current code, it loads `adnet_corr.ckpt` (trained without re-weighing) and `adnet_weight3.ckpt` (trained with re-weighing).

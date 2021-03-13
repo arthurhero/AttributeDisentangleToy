@@ -13,7 +13,7 @@ wget https://cs.brown.edu/~gmpatter/Attributes/SUNAttributeDB_Images.tar.gz
 ```sh
 ../datasets/sun
 ```
-relative to the code folder
+relative to the code folder.
 
 3. To train the model (with weights), run
 ```sh
